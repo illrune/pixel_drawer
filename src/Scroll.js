@@ -11,9 +11,16 @@ class Scroll extends Component {
         };
     };
 
-    useScroll = (e) => {
-        const maxLeft = this.refScrollArea.current.clientWidth - this.props.width;
-        const maxTop = this.refScrollArea.current.clientHeight- this.props.height;
+    pointerDown = (e) => {
+        if (e.button === 0)
+            return;
+        if (e.button === 2)
+            this.useScroll();
+    }
+
+    useScroll = () => {
+        const maxLeft = this.refScrollArea.current.clientWidth - this.props.width - 1;
+        const maxTop = this.refScrollArea.current.clientHeight- this.props.height - 1;
 
         const mover = (e) => {
             const left = Math.min(Math.max(this.state.left + e.movementX, 0), maxLeft);
@@ -35,7 +42,8 @@ class Scroll extends Component {
         const width = this.props.width * this.props.scale;
         const height = this.props.height * this.props.scale;
 
-        return <div ref={this.refScrollArea} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }} onPointerDown={this.useScroll}>
+        return <div ref={this.refScrollArea} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }} 
+                onPointerDown={this.pointerDown} onContextMenu={(e) => { e.preventDefault(); }}>
             <div style={{ position: 'absolute', width: width, height: height, left: this.state.left, top: this.state.top, border: '1px solid black' }}>
                 { this.props.children }
             </div>
