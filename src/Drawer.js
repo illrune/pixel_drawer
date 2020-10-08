@@ -15,6 +15,10 @@ class Drawer extends Component {
         this.buttonSize = 30;
     };
 
+    selectPoint = (x, y) => {
+
+    }
+
     render() {
         return <div style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}>
             <div id='ButtonArea' style ={{ position: 'absolute', top: 0, width: '100%', height: this.buttonSize, overflow: 'hidden' }}>
@@ -27,7 +31,7 @@ class Drawer extends Component {
             <div style ={{ position: 'absolute', top: this.buttonSize, bottom: 0, width: '100%' }}>
                 <div style ={{ position: 'relative', width: '100%', height: '100%' }}> 
                     <canvas ref={this.refCanvasOrg} style={{ width: this.state.width, height: this.state.height, display: 'none' }} />
-                    <Scroll id='ShowArea' width={this.state.width} height={this.state.height} scale={this.state.scale}>
+                    <Scroll id='ShowArea' width={this.state.width} height={this.state.height} scale={this.state.scale} selectPoint={this.selectPoint}>
                         <canvas ref={this.refCanvasShow} style={{ width: this.state.width * this.state.scale, height: this.state.height * this.state.scale }} />
                     </Scroll>
                 </div>

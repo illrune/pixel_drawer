@@ -12,29 +12,33 @@ class Scroll extends Component {
     };
 
     pointerDown = (e) => {
-        if (e.button === 0)
-            return;
-        if (e.button === 2)
+        if (e.button === 0) {
+            if (this.props.selectPoint)
+                this.props.selectPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        } else if (e.button === 2) {
             this.useScroll();
+        }
     }
 
     useScroll = () => {
-        const maxLeft = this.refScrollArea.current.clientWidth - this.props.width - 1;
-        const maxTop = this.refScrollArea.current.clientHeight- this.props.height - 1;
+        const minLeft = Math.min(this.refScrollArea.current.clientWidth - this.props.width - 1, 0);
+        const maxLeft = Math.max(this.refScrollArea.current.clientWidth - this.props.width - 1, 0);
+        const minTop = Math.min(this.refScrollArea.current.clientHeight - this.props.height - 1, 0);
+        const maxTop = Math.max(this.refScrollArea.current.clientHeight - this.props.height - 1, 0);
 
         const mover = (e) => {
-            const left = Math.min(Math.max(this.state.left + e.movementX, 0), maxLeft);
-            const top = Math.min(Math.max(this.state.top + e.movementY, 0), maxTop);
+            const left = Math.min(Math.max(this.state.left + e.movementX, minLeft), maxLeft);
+            const top = Math.min(Math.max(this.state.top + e.movementY, minTop), maxTop);
 
             this.setState({ left: left, top: top });
         }
 
         const remover = () => {
-            this.refScrollArea.current.removeEventListener('pointermove', mover);
+            window.removeEventListener('pointermove', mover);
             window.removeEventListener('pointerup', remover);
         }
 
-        this.refScrollArea.current.addEventListener('pointermove', mover);
+        window.addEventListener('pointermove', mover);
         window.addEventListener('pointerup', remover);
     }
 
