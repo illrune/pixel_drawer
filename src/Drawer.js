@@ -34,10 +34,7 @@ class Drawer extends Component {
     }
 
     pixelDraw(x, y, rgba) {
-        if (!this.canvasData)
-            return;
-
-        if (x < 0 || !(x < this.state.width) || y < 0 || !(y < this.state.height))
+        if (!this.canvasData || x < 0 || x >= this.state.width || y < 0 || y >= this.state.height)
             return;
 
         const index = (Math.floor(x) + Math.floor(y) * this.state.width) * 4;
