@@ -42,7 +42,11 @@ class Scroll extends Component {
         window.addEventListener('pointerup', remover);
     }
 
-    render() {
+    toScrollPoint = (canvasX, canvasY) => { 
+
+    }
+
+    render = () => {
         const width = this.props.width * this.props.scale;
         const height = this.props.height * this.props.scale;
 
