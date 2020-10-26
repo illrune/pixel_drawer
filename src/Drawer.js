@@ -57,7 +57,19 @@ class Drawer extends Component {
     }
 
     pen = (x, y) => {
-        
+        const mover = (e) => {
+            const toLocal = this.toScrollPoint(e.clientX, e.clientY);
+            console.log(toLocal);
+            this.pixelDraw(toLocal.x, toLocal.y, { r: 125, g: 126, b: 126, a: 1 });
+        }
+
+        const remover = () => {
+            window.removeEventListener('pointermove', mover);
+            window.removeEventListener('pointerup', remover);
+        }
+
+        window.addEventListener('pointermove', mover);
+        window.addEventListener('pointerup', remover);
     }
 
     pixelDraw = (x, y, rgba) => {
@@ -87,11 +99,11 @@ class Drawer extends Component {
         };
     }
 
-    toScrollPoint = (localX, localY) => {
+    toScrollPoint = (clientX, clientY) => {
         if (!this.refScroll.current)
-            return { x: localX, y: localY };
+            return { x: clientX, y: clientY };
 
-        this.refScroll.current.toScrollPoint(localX, localY);
+        return this.refScroll.current.toScrollPoint(clientX, clientY);
     }
 
     render = () => {

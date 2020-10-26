@@ -42,8 +42,12 @@ class Scroll extends Component {
         window.addEventListener('pointerup', remover);
     }
 
-    toScrollPoint = (canvasX, canvasY) => { 
+    toScrollPoint = (globalX, globalY) => { 
+        const rect = this.refScrollArea.current.getClientRects();
+        const localX = globalX - rect[0].left - this.state.left;
+        const localY = globalY - rect[0].top - this.state.top;
 
+        return { x: localX, y: localY };
     }
 
     render = () => {
