@@ -91,7 +91,7 @@ class Drawer extends Component {
         if (!this.refScroll.current)
             return { x: localX, y: localY };
 
-        
+        this.refScroll.current.toScrollPoint(localX, localY);
     }
 
     render = () => {
