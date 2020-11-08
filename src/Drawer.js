@@ -14,8 +14,8 @@ class Drawer extends Component {
             width: 200,
             height: 200,
             scale: 1,
-            pointerSize: 1,
-            color: { r: 255, g: 0, b: 255, a: 1 },
+            pointerSize: 3,
+            color: { r: 255, g: 0, b: 255, a: 255 },
         };
         this.canvasData = null;
         this.drawType = this.pen;
@@ -57,10 +57,13 @@ class Drawer extends Component {
     }
 
     pen = (x, y) => {
+        let prev = { x, y };
+        this.pointDraw(prev.x, prev.y, this.state.color);
+
         const mover = (e) => {
             const toLocal = this.toScrollPoint(e.clientX, e.clientY);
-            console.log(toLocal);
-            this.pixelDraw(toLocal.x, toLocal.y, this.state.color);
+            this.lineDraw(prev.x, prev.y, toLocal.x, toLocal.y, this.state.color);
+            prev = { x: toLocal.x, y: toLocal.y };
         }
 
         const remover = () => {
@@ -124,9 +127,9 @@ class Drawer extends Component {
             </div>
             <div style ={{ position: 'absolute', top: this.buttonSize, bottom: 0, width: '100%' }}>
                 <div style ={{ position: 'relative', width: '100%', height: '100%' }} onWheel={this.onWheel}> 
-                    <canvas ref={this.refCanvasOrg} style={{ width: this.state.width, height: this.state.height, display: 'none' }} />
+                    <canvas ref={this.refCanvasOrg} width={this.state.width} height={this.state.height} style={{ display: 'none' }} />
                     <Scroll id='ShowArea' ref={this.refScroll} width={this.state.width} height={this.state.height} scale={this.state.scale} selectPoint={this.selectPoint}>
-                        <canvas ref={this.refCanvasShow} style={{ width: this.state.width * this.state.scale, height: this.state.height * this.state.scale }} />
+                        <canvas ref={this.refCanvasShow} width={this.state.width} height={this.state.height} style={{ width: this.state.width * this.state.scale, height: this.state.height * this.state.scale, imageRendering: 'pixelated' }} />
                     </Scroll>
                 </div>
             </div>
