@@ -104,8 +104,15 @@ class Drawer extends Component {
 
     onWheel = (e) => { // scale change
         const dir = Math.sign(e.deltaY) * -1;
+        this.setScale(this.state.scale + dir);
+    }
+
+    setScale = (scale) => {
         this.setState({
-            scale: Util.clamp(this.state.scale + dir, 1, 5)
+            scale: Util.clamp(scale, 1, 5)
+        }, () => {
+            const ctx = this.refCanvasShow.current.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
         });
     }
 
