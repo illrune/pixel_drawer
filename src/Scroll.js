@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Util from './Util';
+
 class Scroll extends Component {
     constructor(props) {
         super();
@@ -21,14 +23,14 @@ class Scroll extends Component {
     }
 
     useScroll = () => {
-        const minLeft = Math.min(this.refScrollArea.current.clientWidth - this.props.width - 1, 0);
-        const maxLeft = Math.max(this.refScrollArea.current.clientWidth - this.props.width - 1, 0);
-        const minTop = Math.min(this.refScrollArea.current.clientHeight - this.props.height - 1, 0);
-        const maxTop = Math.max(this.refScrollArea.current.clientHeight - this.props.height - 1, 0);
+        const minLeft = Math.min(this.refScrollArea.current.clientWidth - (this.props.width * this.props.scale) - 2, 0);
+        const maxLeft = Math.max(this.refScrollArea.current.clientWidth - (this.props.width * this.props.scale) - 2, 0);
+        const maxTop = Math.max(this.refScrollArea.current.clientHeight - (this.props.height * this.props.scale) - 2, 0);
+        const minTop = Math.min(this.refScrollArea.current.clientHeight - (this.props.height * this.props.scale) - 2, 0);
 
         const mover = (e) => {
-            const left = Math.min(Math.max(this.state.left + e.movementX, minLeft), maxLeft);
-            const top = Math.min(Math.max(this.state.top + e.movementY, minTop), maxTop);
+            const left = Util.clamp(this.state.left + e.movementX, minLeft, maxLeft);
+            const top = Util.clamp(this.state.top + e.movementY, minTop, maxTop);
 
             this.setState({ left: left, top: top });
         }

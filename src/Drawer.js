@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import Scroll from './Scroll';
 import Util from './Util';
 
@@ -103,6 +104,9 @@ class Drawer extends Component {
     }
 
     onWheel = (e) => { // scale change
+        if (e.nativeEvent.buttons !== 0)    // no click
+            return;
+
         const dir = Math.sign(e.deltaY) * -1;
         this.setScale(this.state.scale + dir);
     }
@@ -111,6 +115,7 @@ class Drawer extends Component {
         this.setState({
             scale: Util.clamp(scale, 1, 5)
         }, () => {
+            // canvas reset
             this.refCanvasShow.current.width = this.state.width * this.state.scale;
             this.refCanvasShow.current.height = this.state.height * this.state.scale;
             const ctx = this.refCanvasShow.current.getContext('2d');
