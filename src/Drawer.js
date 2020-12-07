@@ -111,6 +111,8 @@ class Drawer extends Component {
         this.setState({
             scale: Util.clamp(scale, 1, 5)
         }, () => {
+            this.refCanvasShow.current.width = this.state.width * this.state.scale;
+            this.refCanvasShow.current.height = this.state.height * this.state.scale;
             const ctx = this.refCanvasShow.current.getContext('2d');
             ctx.imageSmoothingEnabled = false;
         });
