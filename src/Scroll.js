@@ -15,8 +15,11 @@ class Scroll extends Component {
 
     pointerDown = (e) => {
         if (e.button === 0) {
-            if (this.props.selectPoint)
-                this.props.selectPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+            if (this.props.selectPoint) {
+                // global(clinet) XY -> local XY
+                const local = this.toScrollPoint(e.nativeEvent.clientX, e.nativeEvent.clientY);
+                this.props.selectPoint(local.x, local.y);
+            }
         } else if (e.button === 2) {
             this.useScroll();
         }
@@ -46,8 +49,8 @@ class Scroll extends Component {
 
     toScrollPoint = (globalX, globalY) => { // use client XY
         const rect = this.refScrollArea.current.getClientRects();
-        const localX = globalX - rect[0].left - this.state.left;
-        const localY = globalY - rect[0].top - this.state.top;
+        const localX = (globalX - rect[0].left - this.state.left) / this.props.scale;
+        const localY = (globalY - rect[0].top - this.state.top) / this.props.scale;
 
         return { x: localX, y: localY };
     }
