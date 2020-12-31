@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 
 import Scroll from './Scroll';
+import Button from './IconButton';
 import Util from './Util';
+
+import IconPen from './Icons/pen.png';
+import IconPaint from './Icons/paint.png';
 
 class Drawer extends Component {
     constructor(props) {
@@ -133,11 +137,11 @@ class Drawer extends Component {
     render = () => {
         return <div style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}>
             <div id='ButtonArea' style ={{ position: 'absolute', top: 0, width: '100%', height: this.buttonSize, overflow: 'hidden' }}>
-                <button style={{ width: this.buttonSize, height: this.buttonSize }} />
-                <button style={{ width: this.buttonSize, height: this.buttonSize }} />
-                <button style={{ width: this.buttonSize, height: this.buttonSize }} />
-                <button style={{ width: this.buttonSize, height: this.buttonSize }} />
-                <button style={{ width: this.buttonSize, height: this.buttonSize }} />
+                <Button size={this.buttonSize} src={IconPen} event={null} />
+                <Button size={this.buttonSize} src={IconPaint} event={null} />
+                <Button size={this.buttonSize} src={IconPen} event={null} />
+                <Button size={this.buttonSize} src={IconPen} event={null} />
+                <Button size={this.buttonSize} src={IconPen} event={null} />
             </div>
             <div style ={{ position: 'absolute', top: this.buttonSize, bottom: 0, width: '100%' }}>
                 <div style ={{ position: 'relative', width: '100%', height: '100%' }} onWheel={this.onWheel}> 
