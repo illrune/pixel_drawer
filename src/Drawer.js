@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 
 import Scroll from './Scroll';
-import Button from './IconButton';
 import Util from './Util';
-
-import IconPen from './Icons/pen.png';
-import IconPaint from './Icons/paint.png';
 
 class Drawer extends Component {
     constructor(props) {
@@ -16,16 +12,14 @@ class Drawer extends Component {
         this.refScroll = React.createRef();
 
         this.state = {
-            width: 200,
-            height: 200,
+            width: props.width || 200,
+            height: props.height || 200,
             scale: 1,
             pointerSize: 3,
             color: { r: 255, g: 0, b: 255, a: 255 },
         };
         this.canvasData = null;
         this.drawType = this.pen;
-
-        this.buttonSize = 30;
     };
 
     componentDidMount = () => {
@@ -61,6 +55,16 @@ class Drawer extends Component {
         this.drawType.call(this, x, y);
     }
 
+    selectType = (type) => {
+        switch (type) {
+            case 'pen': this.drawType = this.pen;
+                break;
+            case 'paint': this.drawType = this.paint;
+                break;
+            default: this.drawType = this.pen;
+        }
+    }
+
     pen = (x, y) => {
         let prev = { x, y };
         this.pointDraw(prev.x, prev.y, this.state.color);
@@ -78,6 +82,52 @@ class Drawer extends Component {
 
         window.addEventListener('pointermove', mover);
         window.addEventListener('pointerup', remover);
+    }
+
+    paint = (x, y) => {
+        const startIndex = (Math.floor(x) + Math.floor(y) * this.state.width) * 4;
+        const startColor = {
+            r: this.canvasData.data[startIndex],
+            g: this.canvasData.data[startIndex + 1],
+            b: this.canvasData.data[startIndex + 2],
+            a: this.canvasData.data[startIndex + 3]
+        };
+
+        const isSameColor = startColor.r === this.state.color.r 
+            && startColor.g === this.state.color.g 
+            && startColor.b === this.state.color.b 
+            && startColor.a === this.state.color.a;
+
+        if (isSameColor || this.canvasData.data[startIndex] === undefined)
+            return;
+            
+        const dest = [startIndex];
+        while(dest.length > 0) {
+            const index = dest.shift();
+            const oldColor = {
+                r: this.canvasData.data[index],
+                g: this.canvasData.data[index + 1],
+                b: this.canvasData.data[index + 2],
+                a: this.canvasData.data[index + 3]
+            };
+
+            if (startColor.r !== oldColor.r || startColor.g !== oldColor.g || startColor.b !== oldColor.b || startColor.a !== oldColor.a)
+                continue;
+
+            this.canvasData.data[index] = this.state.color.r;
+            this.canvasData.data[index + 1] = this.state.color.g;
+            this.canvasData.data[index + 2] = this.state.color.b;
+            this.canvasData.data[index + 3] = this.state.color.a;
+
+            if (index % (4 * this.state.width) !== 0)
+                dest.push(index - 4);   // left
+            if (index % (4 * this.state.width) !== 4 * (this.state.width - 1))
+                dest.push(index + 4);   // right
+            if (index > 4 * (this.state.width - 1))
+                dest.push(index - (4 * this.state.width));  // up
+            if (index < 4 * this.state.width * (this.state.height - 1))
+                dest.push(index + (4 * this.state.width));  // down
+        }
     }
 
     pixelDraw = (x, y, rgba) => {
@@ -135,22 +185,11 @@ class Drawer extends Component {
     }
 
     render = () => {
-        return <div style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}>
-            <div id='ButtonArea' style ={{ position: 'absolute', top: 0, width: '100%', height: this.buttonSize, overflow: 'hidden' }}>
-                <Button size={this.buttonSize} src={IconPen} event={null} />
-                <Button size={this.buttonSize} src={IconPaint} event={null} />
-                <Button size={this.buttonSize} src={IconPen} event={null} />
-                <Button size={this.buttonSize} src={IconPen} event={null} />
-                <Button size={this.buttonSize} src={IconPen} event={null} />
-            </div>
-            <div style ={{ position: 'absolute', top: this.buttonSize, bottom: 0, width: '100%' }}>
-                <div style ={{ position: 'relative', width: '100%', height: '100%' }} onWheel={this.onWheel}> 
-                    <canvas ref={this.refCanvasOrg} width={this.state.width} height={this.state.height} style={{ display: 'none' }} />
-                    <Scroll id='ShowArea' ref={this.refScroll} width={this.state.width} height={this.state.height} scale={this.state.scale} selectPoint={this.selectPoint}>
-                        <canvas ref={this.refCanvasShow} width={this.state.width} height={this.state.height} style={{ width: this.state.width * this.state.scale, height: this.state.height * this.state.scale, imageRendering: 'pixelated' }} />
-                    </Scroll>
-                </div>
-            </div>
+        return <div style ={{ position: 'relative', width: '100%', height: '100%' }} onWheel={this.onWheel}> 
+            <canvas ref={this.refCanvasOrg} width={this.state.width} height={this.state.height} style={{ display: 'none' }} />
+            <Scroll id='ShowArea' ref={this.refScroll} width={this.state.width} height={this.state.height} scale={this.state.scale} selectPoint={this.selectPoint}>
+                <canvas ref={this.refCanvasShow} width={this.state.width} height={this.state.height} style={{ width: this.state.width * this.state.scale, height: this.state.height * this.state.scale, imageRendering: 'pixelated' }} />
+            </Scroll>
         </div>;
     };
 }
